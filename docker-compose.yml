@@ -1,0 +1,32 @@
+services:
+  db:
+    container_name: db
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST: ${DB_HOSTNAME:-dev}
+      POSTGRES_DB: ${DB_NAME:-dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dev}
+      POSTGRES_USER: ${DB_USER:-dev}
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-dev}
+      DB_USER: ${DB_USER:-dev}
+      DB_PASSWORD: ${DB_PASSWORD:-dev}
+
+volumes:
+  postgres-data:
