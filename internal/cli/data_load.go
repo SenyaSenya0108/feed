@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"feed/internal/dataLoad"
+	"feed/internal/app/dataLoad"
 	"github.com/spf13/cobra"
 )
 

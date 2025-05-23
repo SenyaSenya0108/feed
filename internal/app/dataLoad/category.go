@@ -2,7 +2,7 @@ package dataLoad
 
 import (
 	"encoding/json"
-	"feed/internal/client"
+	"feed/internal/app/client"
 	"fmt"
 )
 
