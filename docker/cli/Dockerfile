@@ -25,4 +25,4 @@ RUN apk add --no-cache postgresql-client
 # Проверяем, что migrate доступен
 RUN migrate -version
 
-ENTRYPOINT ["/app/feed"]
+#ENTRYPOINT ["/app/feed"]
