@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./migrations:/app/migrations
+      - ./src/migrations:/app/migrations
 
 volumes:
   postgres-data:

@@ -1,13 +1,14 @@
-package client
+package app
 
 import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
-func Category() []byte {
-	resp, err := http.Get("")
+func getCategory() []byte {
+	resp, err := http.Get(os.Getenv("CATEGORY_URI"))
 
 	if err != nil {
 		panic("Запрос неудачный")

@@ -2,10 +2,11 @@ FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
-COPY ../../go.mod go.sum ./
+COPY src/go.mod src/go.sum ./
+
 RUN go mod download
 
-COPY ../.. .
+COPY src/. .
 
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 

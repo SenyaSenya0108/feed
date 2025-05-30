@@ -1,23 +1,26 @@
 package cli
 
 import (
+	"feed/internal/app"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "hugo",
+	Use:   "root",
 	Short: "Hugo is a very fast static site generator",
-	Long: `A Fast and Flexible Static Site Generator built with
-                love by spf13 and friends in Go.
-                Complete documentation is available at https://gohugo.io/documentation/`,
+	Long:  `long`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Root cobra")
 	},
 }
 
-func Execute() {
+var appCtx *app.AppContext
+
+func Execute(ctx *app.AppContext) {
+	//Создаем контекст в пространстве пакета консольных команд, для DI
+	appCtx = ctx
 	if err := rootCmd.Execute(); err != nil {
 		_, err := fmt.Fprintln(os.Stderr, err)
 		if err != nil {
@@ -25,8 +28,4 @@ func Execute() {
 		}
 		os.Exit(1)
 	}
-}
-
-func main() {
-	Execute()
 }
