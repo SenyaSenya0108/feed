@@ -13,20 +13,18 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-dev}
       POSTGRES_USER: ${DB_USER:-dev}
 
-  app:
-    container_name: app
+  cli:
+    container_name: cli
     build:
       context: .
-      dockerfile: docker/app/Dockerfile
+      dockerfile: docker/cli/Dockerfile
     depends_on:
       - db
     restart: unless-stopped
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-dev}
-      DB_USER: ${DB_USER:-dev}
-      DB_PASSWORD: ${DB_PASSWORD:-dev}
+    env_file:
+      - .env
+    volumes:
+      - ./src/migrations:/app/migrations
 
 volumes:
   postgres-data:
