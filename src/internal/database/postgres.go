@@ -9,8 +9,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
-
 var (
 	host     = os.Getenv("DB_HOSTNAME")
 	port     = os.Getenv("DB_PORT")
@@ -28,13 +26,6 @@ func InitDB() *sql.DB {
 		log.Fatal(err)
 	}
 
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(db)
-
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
 	}
@@ -42,4 +33,14 @@ func InitDB() *sql.DB {
 	log.Println("Successfully connected to the database")
 
 	return db
+}
+
+func CLoseDB(db *sql.DB) {
+	err := db.Close()
+
+	if err != nil {
+		log.Fatalln(err)
+	} else {
+		log.Println("The connection to the database is closed ")
+	}
 }

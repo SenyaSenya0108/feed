@@ -12,4 +12,6 @@ func main() {
 		DB: db,
 	}
 	cli.Execute(ctx)
+
+	database.CLoseDB(db)
 }

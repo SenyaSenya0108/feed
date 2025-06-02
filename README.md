@@ -24,3 +24,9 @@
 ```bash
   docker compose run --rm cli sh -c 'migrate -path migrations/ -database "$DB_URL" -verbose down'
 ```
+
+### Команда загрузки данных
+
+```bash
+  docker compose run --rm cli ./feed data-load
+```

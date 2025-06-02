@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"feed/internal/models"
+	"feed/internal/repository"
 	"github.com/google/uuid"
 	"log"
 	"strconv"
@@ -17,14 +18,18 @@ type Category struct {
 }
 
 func Load(appCtx *AppContext) {
-	//categories := loadCategory()
+	categories := getCategoriesFromResponse()
+	repo := repository.NewPostgresCategoryRepository(appCtx.DB)
 
-	//for _, value := range categories {
-	//category := convertModel(&value)
-	//}
+	for _, value := range categories {
+		category := convertModel(&value)
+		if err := repo.Create(*category); err != nil {
+			log.Fatalln(err)
+		}
+	}
 }
 
-func loadCategory() []Category {
+func getCategoriesFromResponse() []Category {
 	var categories []Category
 	response := getCategory()
 
