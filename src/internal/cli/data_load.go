@@ -2,6 +2,7 @@ package cli
 
 import (
 	"feed/internal/app"
+
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +11,7 @@ var addCmd = &cobra.Command{
 	Short: "Loading data",
 	Long:  `Loading data from the main database.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		app.Load(appCtx)
+		app.CategoryLoad()
 	},
 }
 

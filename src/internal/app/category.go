@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"feed/internal/models"
 	"feed/internal/repository"
-	"github.com/google/uuid"
 	"log"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 type Category struct {
@@ -17,9 +18,9 @@ type Category struct {
 	ParentId int    `json:"parent_id"`
 }
 
-func Load(appCtx *AppContext) {
+func CategoryLoad() {
 	categories := getCategoriesFromResponse()
-	repo := repository.NewPostgresCategoryRepository(appCtx.DB)
+	repo := repository.NewPostgresCategoryRepository()
 
 	for _, value := range categories {
 		category := convertModel(&value)

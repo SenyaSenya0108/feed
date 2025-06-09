@@ -1,0 +1,23 @@
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /app
+
+COPY src/go.mod src/go.sum ./
+
+RUN go mod download
+
+COPY src/. .
+
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+RUN CGO_ENABLED=0 GOOS=linux go build -gcflags="all=-N -l" -o /app/feed ./cmd/cli/main.go
+
+FROM alpine:3.21
+
+WORKDIR /app
+
+COPY --from=builder /go/bin/dlv /dlv
+COPY --from=builder /app/feed .
+
+RUN apk add --no-cache postgresql-client
+
+ENTRYPOINT [ "/dlv" ]

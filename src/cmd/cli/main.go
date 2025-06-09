@@ -1,17 +1,16 @@
 package main
 
 import (
-	"feed/internal/app"
+	"context"
 	"feed/internal/cli"
 	"feed/internal/database"
 )
 
 func main() {
-	db := database.InitDB()
-	ctx := &app.AppContext{
-		DB: db,
-	}
-	cli.Execute(ctx)
+	ctx := context.Background()
+	database.InitDB(ctx)
 
-	database.CLoseDB(db)
+	cli.Execute()
+
+	database.CLoseDB()
 }

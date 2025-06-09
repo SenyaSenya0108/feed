@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"feed/internal/app"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -16,11 +16,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var appCtx *app.AppContext
-
-func Execute(ctx *app.AppContext) {
-	//Создаем контекст в пространстве пакета консольных команд, для DI
-	appCtx = ctx
+func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		_, err := fmt.Fprintln(os.Stderr, err)
 		if err != nil {
