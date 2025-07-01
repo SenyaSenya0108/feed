@@ -1,0 +1,16 @@
+services:
+  cli:
+    container_name: cli
+    build:
+      context: .
+      dockerfile: build/cli/Dockerfile.debug
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "2345:2345"
+    command: "--listen=:2345 --headless=true --log=true --log-output=debugger,debuglineerr,gdbwire,lldbout,rpc --accept-multiclient --api-version=2 exec ./feed"
+    env_file:
+      - .env

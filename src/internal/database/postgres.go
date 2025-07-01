@@ -1,46 +1,44 @@
 package database
 
 import (
-	"database/sql"
-	"fmt"
+	"context"
 	"log"
 	"os"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var (
-	host     = os.Getenv("DB_HOSTNAME")
-	port     = os.Getenv("DB_PORT")
-	user     = os.Getenv("DB_USER")
-	password = os.Getenv("DB_PASSWORD")
-	dbname   = os.Getenv("DB_NAME")
-)
+var db *PostgresPool
 
-func InitDB() *sql.DB {
-	connect := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", connect)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := db.Ping(); err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("Successfully connected to the database")
-
-	return db
+type PostgresPool struct {
+	pool *pgxpool.Pool
 }
 
-func CLoseDB(db *sql.DB) {
-	err := db.Close()
+func InitDB(ctx context.Context) error {
+	connect := os.Getenv("DB_URL")
 
+	pool, err := pgxpool.New(ctx, connect)
 	if err != nil {
-		log.Fatalln(err)
-	} else {
-		log.Println("The connection to the database is closed ")
+		log.Printf("Unable to connect to database: %v\n", err)
+		return err
 	}
+
+	if err := pool.Ping(context.Background()); err != nil {
+		log.Printf("Failed to ping database: %v\n", err)
+		return err
+	}
+
+	db = &PostgresPool{pool: pool}
+	log.Println("Successfully connected to the database")
+
+	return nil
+}
+
+func GetDB() *pgxpool.Pool {
+	return db.pool
+}
+
+func CLoseDB() {
+	db.pool.Close()
+	log.Println("The connection to the database is closed ")
 }
