@@ -11,3 +11,17 @@ type Category struct {
 	Name   string
 	Active bool
 }
+
+type CategorySyncDTO struct {
+	SiteId   int    `json:"site_id"`
+	Active   string `json:"active"`
+	Name     string `json:"name"`
+	Slug     string `json:"slug"`
+	ParentId int    `json:"parent_id"`
+}
+
+type CategoriesSyncDTO []CategorySyncDTO
+
+type CategoryRepository interface {
+	Create(category Category) error
+}

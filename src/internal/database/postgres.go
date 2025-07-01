@@ -14,22 +14,24 @@ type PostgresPool struct {
 	pool *pgxpool.Pool
 }
 
-func InitDB(ctx context.Context) {
+func InitDB(ctx context.Context) error {
 	connect := os.Getenv("DB_URL")
 
 	pool, err := pgxpool.New(ctx, connect)
 	if err != nil {
 		log.Printf("Unable to connect to database: %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	if err := pool.Ping(context.Background()); err != nil {
 		log.Printf("Failed to ping database: %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	db = &PostgresPool{pool: pool}
 	log.Println("Successfully connected to the database")
+
+	return nil
 }
 
 func GetDB() *pgxpool.Pool {
