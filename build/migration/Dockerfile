@@ -1,12 +1,8 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-COPY src/go.mod src/go.sum ./
-
-RUN go mod download
-
-COPY src/. .
+COPY migrations/. ./migrations
 
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
@@ -17,5 +13,4 @@ WORKDIR /app
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
 
-RUN apk add --no-cache postgresql-client
 RUN migrate -version

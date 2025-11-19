@@ -1,6 +1,8 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
+
+RUN mkdir /logs
 
 COPY src/go.mod src/go.sum ./
 
@@ -18,4 +20,6 @@ COPY --from=builder /app/feed .
 
 RUN apk add --no-cache postgresql-client
 
-#ENTRYPOINT ["/app/feed"]
+ENV TZ=Europe/Moscow
+
+ENTRYPOINT ["./feed"]
