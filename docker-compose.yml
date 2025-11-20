@@ -4,47 +4,6 @@ services:
     build:
       context: .
       dockerfile: build/cli/Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-
-  migration:
-    container_name: migration
-    build:
-      context: .
-      dockerfile: build/migration/Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
     restart: unless-stopped
     env_file:
       - .env
-    volumes:
-      - ./src/migrations:/app/migrations
-
-  db:
-    container_name: db
-    image: postgres:17-alpine
-    ports:
-      - "5434:5432"
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-dev} -d ${DB_NAME:-dev}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    environment:
-      POSTGRES_HOST: ${DB_HOSTNAME:-dev}
-      POSTGRES_DB: ${DB_NAME:-dev}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-dev}
-      POSTGRES_USER: ${DB_USER:-dev}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:
