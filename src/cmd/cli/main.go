@@ -1,59 +1,30 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
+	"time"
 
-	"feed/internal/broker"
+	"feed/internal/config"
+	"feed/internal/storage"
+
+	"feed/internal/command"
 )
 
 func main() {
-	if err := broker.Connect(); err != nil {
-		log.Panic(err)
-	}
-	ch, err := broker.Channel()
-	if err != nil {
-		log.Panic(err.Error())
-	}
-	defer func() {
-		if err := ch.Close(); err != nil {
-			log.Panic(err.Error())
-		}
-		if err := broker.Disconnect(); err != nil {
-			log.Panic(err.Error())
-		}
-	}()
+	cfg := config.Load()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
 
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
-	)
-	if err != nil {
-		log.Panic(err.Error())
+	// Инициализация баз данных
+	storage.InitPostgresDB(ctx, cfg)
+	defer storage.ClosePostgresDB()
+
+	// CLI
+	cmd := command.NewRootCMD()
+	if err := cmd.Execute(); err != nil {
+		log.Println("launch cli", err)
+		os.Exit(1)
 	}
-
-	msgs, err := ch.Consume(
-		q.Name,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Panic(err.Error())
-	}
-
-	var forever chan struct{}
-	go func() {
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
-		}
-	}()
-
-	<-forever
 }
