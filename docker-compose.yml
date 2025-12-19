@@ -18,18 +18,20 @@ services:
     build:
       context: .
       dockerfile: build/migration/Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
     depends_on:
       db:
         condition: service_healthy
-    restart: unless-stopped
     env_file:
       - .env
     volumes:
-      - ./src/migrations:/app/migrations
+      - ./migrations:/app/migrations
 
   db:
-    container_name: chat-db
-    image: postgres:latest
+    container_name: db
+    image: postgres:17-alpine
     ports:
       - "5434:5432"
     restart: unless-stopped
@@ -39,7 +41,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST: ${DB_HOSTNAME:-dev}
       POSTGRES_DB: ${DB_NAME:-dev}
@@ -47,4 +49,4 @@ services:
       POSTGRES_USER: ${DB_USER:-dev}
 
 volumes:
-  postgres-data:
+  db_data:

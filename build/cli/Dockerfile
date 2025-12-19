@@ -1,6 +1,8 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
+
+RUN mkdir /logs
 
 COPY src/go.mod src/go.sum ./
 
@@ -8,14 +10,16 @@ RUN go mod download
 
 COPY src/. .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/feed ./cmd/cli/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/cli ./cmd/cli/main.go
 
 FROM alpine:3.21
 
 WORKDIR /app
 
-COPY --from=builder /app/feed .
+COPY --from=builder /app/cli .
 
 RUN apk add --no-cache postgresql-client
 
-#ENTRYPOINT ["/app/feed"]
+ENV TZ=Europe/Moscow
+
+ENTRYPOINT ["./cli"]
