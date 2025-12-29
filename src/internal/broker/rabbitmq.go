@@ -18,6 +18,14 @@ func Connect() error {
 	return nil
 }
 
+func Disconnect() error {
+	if err := conn.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Channel() (*amqp.Channel, error) {
 	channel, err := conn.Channel()
 	if err != nil {
@@ -27,10 +35,20 @@ func Channel() (*amqp.Channel, error) {
 	return channel, nil
 }
 
-func Disconnect() error {
-	if err := conn.Close(); err != nil {
-		return err
+func QueueSyncData() (*amqp.Channel, *amqp.Queue, error) {
+	ch, err := Channel()
+	if err != nil {
+		return nil, nil, err
 	}
 
-	return nil
+	q, err := ch.QueueDeclare(
+		"sync_data",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	return ch, &q, nil
 }

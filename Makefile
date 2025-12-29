@@ -1,3 +1,9 @@
+init: build \
+	up
+
+restart: down \
+	init
+
 up:
 	docker compose up -d
 

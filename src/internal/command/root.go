@@ -14,7 +14,6 @@ func NewRootCMD() *CLI {
 		Short: "An application that generates feeds for various services",
 		Long:  "An application that generates feeds for various services",
 		Run: func(cmd *cobra.Command, args []string) {
-			//fmt.Println()
 		},
 	}
 

@@ -1,6 +1,12 @@
 package command
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"feed/internal/broker"
+
+	"github.com/spf13/cobra"
+)
 
 // TODO подумать над организацией кода
 var syncCmd = &cobra.Command{
@@ -8,6 +14,36 @@ var syncCmd = &cobra.Command{
 	Short: "data synchronization",
 	Long:  "data synchronization for feed generation",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if err := syncCategory(); err != nil {
+			panic(fmt.Sprintf("data synchronization error: %v", err))
+		}
 	},
+}
+
+func syncCategory() error {
+	ch, q, err := broker.QueueSyncData()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	msgs, err := ch.Consume(
+		q.Name,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	var process chan struct{}
+	go func() {
+		for d := range msgs {
+			fmt.Println(d.Body)
+		}
+	}()
+	<-process
+
+	return nil
 }
