@@ -1,10 +1,16 @@
 init: build \
 	up
 
-restart: down \
-	init
-
 up:
+	docker compose up -d
+
+rebuild:
+	docker compose up -d --build
+
+restart: down \
+	up
+
+init:
 	docker compose up -d
 
 build:
@@ -12,3 +18,6 @@ build:
 
 down:
 	docker compose down
+
+sync-data:
+	docker compose run --rm cli sync-data

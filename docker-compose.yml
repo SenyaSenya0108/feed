@@ -40,13 +40,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    volumes:
-      - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_HOST: ${DB_HOSTNAME:-dev}
+      POSTGRES_HOST: ${DB_HOST:-dev}
       POSTGRES_DB: ${DB_NAME:-dev}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-dev}
       POSTGRES_USER: ${DB_USER:-dev}
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
 volumes:
   db_data:

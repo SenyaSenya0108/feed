@@ -35,15 +35,15 @@ func Channel() (*amqp.Channel, error) {
 	return channel, nil
 }
 
-func QueueSyncData() (*amqp.Channel, *amqp.Queue, error) {
+func QueueSyncData(queueName string) (*amqp.Channel, *amqp.Queue, error) {
 	ch, err := Channel()
 	if err != nil {
 		return nil, nil, err
 	}
 
 	q, err := ch.QueueDeclare(
-		"sync_data",
-		false,
+		queueName,
+		true,
 		false,
 		false,
 		false,
